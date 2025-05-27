@@ -1,0 +1,45 @@
+name: Destroy EKS + Helm Infra
+
+on:
+  workflow_dispatch:  # 수동 실행만 허용 (중요!)
+
+env:
+  AWS_REGION: ap-northeast-2
+  CLUSTER_NAME: daenamu-test
+
+jobs:
+  destroy:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.12.1
+
+      - name: Update Kubeconfig for EKS
+        run: |
+          aws eks update-kubeconfig \
+            --name ${{ env.CLUSTER_NAME }} \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Make destroy step scripts executable
+        run: chmod +x ./step*x.sh
+
+      - name: Run destroy steps
+        run: |
+          for f in ./step*x.sh; do
+            echo "Running $f"
+            $f
+          done
