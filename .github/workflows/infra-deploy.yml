@@ -54,7 +54,7 @@ jobs:
       - name: Create steps.sh dynamically with loop (EKS)
         run: |
           echo '#!/bin/bash' > steps.sh
-          echo 'set -e' >> steps.sh
+          echo 'set -ex' >> steps.sh
           for i in 1 2 3 4 5 9; do
             echo "./step${i}.sh" >> steps.sh
           done
@@ -80,7 +80,7 @@ jobs:
       - name: Create steps_helm.sh dynamically with loop (Helm)
         run: |
           echo '#!/bin/bash' > steps_helm.sh
-          echo 'set -e' >> steps_helm.sh
+          echo 'set -ex' >> steps_helm.sh
           for i in 6 7 10; do
             echo "./step${i}.sh" >> steps_helm.sh
           done
