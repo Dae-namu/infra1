@@ -28,6 +28,9 @@ jobs:
         with:
           terraform_version: 1.12.1
 
+      - name: Terraform Init
+        run: terraform init   
+
       - name: Update Kubeconfig for EKS
         run: |
           aws eks update-kubeconfig \

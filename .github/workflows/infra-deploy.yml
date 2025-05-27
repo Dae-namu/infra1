@@ -29,10 +29,20 @@ jobs:
         with:
           terraform_version: 1.12.1
 
-      - name: Set Executable Permission to step scripts
+      - name: Terraform Init
+        run: terraform init      
+        
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Create steps.sh dynamically with loop
         run: |
-          chmod +x ./steps.sh
-          find . -name "step*.sh" -exec chmod +x {} \;
+          echo '#!/bin/bash' > steps.sh
+          echo 'set -e' >> steps.sh
+          for i in {1..10}; do
+            echo "./step${i}.sh" >> steps.sh
+          done
+          chmod +x steps.sh
 
       - name: Run Steps
         run: ./steps.sh
