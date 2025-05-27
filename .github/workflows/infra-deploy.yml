@@ -29,6 +29,14 @@ jobs:
         with:
           terraform_version: 1.12.1
 
+      - name: Set Executable Permission to step scripts
+        run: |
+          chmod +x ./steps.sh
+          find . -name "step*.sh" -exec chmod +x {} \;
+
+      - name: Run Steps
+        run: ./steps.sh
+
       - name: Update Kubeconfig for EKS
         run: |
           aws eks update-kubeconfig \
@@ -39,10 +47,3 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-      - name: Set Executable Permission to step scripts
-        run: |
-          chmod +x ./steps.sh
-          find . -name "step*.sh" -exec chmod +x {} \;
-
-      - name: Run Steps
-        run: ./steps.sh
