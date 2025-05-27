@@ -1,0 +1,1 @@
+terraform apply --auto-approve -target=aws_eks_cluster.this

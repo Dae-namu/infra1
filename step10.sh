@@ -1,0 +1,1 @@
+terraform apply -target=helm_release.kube_prometheus_stack --auto-approve
