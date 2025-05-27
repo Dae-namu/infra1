@@ -29,6 +29,12 @@ jobs:
         with:
           terraform_version: 1.12.1
 
+      - name: Terraform Init
+        run: terraform init      
+        
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
       - name: Create steps.sh dynamically with loop
         run: |
           echo '#!/bin/bash' > steps.sh
@@ -37,7 +43,7 @@ jobs:
             echo "./step${i}.sh" >> steps.sh
           done
           chmod +x steps.sh
-          
+
       - name: Run Steps
         run: ./steps.sh
 
@@ -47,7 +53,7 @@ jobs:
             --name ${{ env.CLUSTER_NAME }} \
             --region ${{ env.AWS_REGION }}
 
-      - name: Install Helm
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      # - name: Install Helm
+      #   run: |
+      #     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
