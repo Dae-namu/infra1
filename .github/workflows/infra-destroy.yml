@@ -33,13 +33,20 @@ jobs:
           aws eks update-kubeconfig \
             --name ${{ env.CLUSTER_NAME }} \
             --region ${{ env.AWS_REGION }}
+      
+      - name: Destroy steps.sh dynamically with loop
+        run: |
+          echo '#!/bin/bash' > stepxs.sh
+          echo 'set -e' >> stepxs.sh
+          for i in {1..10}; do
+            echo "./step${i}x.sh" >> stepxs.sh
+          done
+          chmod +x stepxs.sh
+
 
       - name: Make destroy step scripts executable
         run: chmod +x ./step*x.sh
 
-      - name: Run destroy steps
-        run: |
-          for f in ./step*x.sh; do
-            echo "Running $f"
-            $f
-          done
+      - name: Run Stepxs
+        run: ./stepxs.sh
+
