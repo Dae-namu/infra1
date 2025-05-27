@@ -1,7 +1,7 @@
 name: Destroy EKS + Helm Infra
 
 on:
-  workflow_dispatch:  # 수동 실행만 허용 (중요!)
+  workflow_dispatch:
 
 env:
   AWS_REGION: ap-northeast-2
@@ -23,21 +23,21 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Setup Terraform
+      - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.12.1
 
       - name: Terraform Init
-        run: terraform init   
+        run: terraform init
 
       - name: Update Kubeconfig for EKS
         run: |
           aws eks update-kubeconfig \
             --name ${{ env.CLUSTER_NAME }} \
             --region ${{ env.AWS_REGION }}
-      
-      - name: Destroy steps.sh dynamically with loop
+
+      - name: Create stepxs.sh dynamically with loop
         run: |
           echo '#!/bin/bash' > stepxs.sh
           echo 'set -e' >> stepxs.sh
@@ -46,10 +46,8 @@ jobs:
           done
           chmod +x stepxs.sh
 
-
-      - name: Make destroy step scripts executable
+      - name: Make destroy scripts executable
         run: chmod +x ./step*x.sh
 
-      - name: Run Stepxs
+      - name: Run destroy steps
         run: ./stepxs.sh
-
