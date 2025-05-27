@@ -29,11 +29,11 @@ jobs:
         with:
           terraform_version: 1.12.1
 
-      # provider 충돌 방지: Kubernetes/Helm provider 제거
-      - name: Temporarily disable kube_providers.tf
-        run: |
-          mkdir -p skipped
-          mv kube_providers.tf skipped/ || true
+      # # provider 충돌 방지: Kubernetes/Helm provider 제거
+      # - name: Temporarily disable kube_providers.tf
+      #   run: |
+      #     mkdir -p skipped
+      #     mv kube_providers.tf skipped/ || true
 
       - name: Terraform Init
         run: terraform init
@@ -55,7 +55,7 @@ jobs:
         run: |
           echo '#!/bin/bash' > steps.sh
           echo 'set -ex' >> steps.sh
-          for i in 1 2 3 4 5 9; do
+          for i in {1..10}; do
             echo "./step${i}.sh" >> steps.sh
           done
           chmod +x steps.sh
@@ -69,25 +69,25 @@ jobs:
             --name ${{ env.CLUSTER_NAME }} \
             --region ${{ env.AWS_REGION }}
 
-      # 복원 후 Helm, Kubernetes 리소스 문제 없이 처리
-      - name: Restore kube_providers.tf
-        run: |
-          mv skipped/kube_providers.tf . || true
+      # # 복원 후 Helm, Kubernetes 리소스 문제 없이 처리
+      # - name: Restore kube_providers.tf
+      #   run: |
+      #     mv skipped/kube_providers.tf . || true
 
       # - name: Terraform Plan (with K8s/Helm)
       #   run: terraform plan -out=tfplan-k8s
 
-      - name: Create steps_helm.sh dynamically with loop (Helm)
-        run: |
-          echo '#!/bin/bash' > steps_helm.sh
-          echo 'set -ex' >> steps_helm.sh
-          for i in 6 7 10; do
-            echo "./step${i}.sh" >> steps_helm.sh
-          done
-          chmod +x steps_helm.sh
+      # - name: Create steps_helm.sh dynamically with loop (Helm)
+      #   run: |
+      #     echo '#!/bin/bash' > steps_helm.sh
+      #     echo 'set -ex' >> steps_helm.sh
+      #     for i in 6 7 10; do
+      #       echo "./step${i}.sh" >> steps_helm.sh
+      #     done
+      #     chmod +x steps_helm.sh
 
-      - name: Run Helm/K8s steps
-        run: ./steps_helm.sh
+      # - name: Run Helm/K8s steps
+      #   run: ./steps_helm.sh
 
       # - name: Install Helm
       #   run: |
