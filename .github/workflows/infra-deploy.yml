@@ -75,19 +75,19 @@ jobs:
       - name: Run Steps
         run: ./steps.sh
 
+      # 복원 후 Helm, Kubernetes 리소스 문제 없이 처리
+      - name: Restore kube_providers.tf
+        run: |
+          mv skipped/kube_providers.tf . || true
+
       - name: Update Kubeconfig for EKS
         run: |
           aws eks update-kubeconfig \
             --name ${{ env.CLUSTER_NAME }} \
             --region ${{ env.AWS_REGION }}
 
-      # 복원 후 Helm, Kubernetes 리소스 문제 없이 처리
-      - name: Restore kube_providers.tf
-        run: |
-          mv skipped/kube_providers.tf . || true
-
-      - name: Terraform Plan (with K8s/Helm)
-        run: terraform plan -out=tfplan-k8s
+      # - name: Terraform Plan (with K8s/Helm)
+      #   run: terraform plan -out=tfplan-k8s
 
       - name: Create steps_helm.sh dynamically with loop (Helm)
         run: |
