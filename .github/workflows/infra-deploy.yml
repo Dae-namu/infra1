@@ -67,7 +67,7 @@ jobs:
         run: |
           echo '#!/bin/bash' > steps.sh
           echo 'set -ex' >> steps.sh
-          for i in {1..2}; do
+          for i in {1..3}; do
             echo "./step${i}.sh" >> steps.sh
           done
           chmod +x steps.sh
@@ -93,7 +93,7 @@ jobs:
         run: |
           echo '#!/bin/bash' > steps_helm.sh
           echo 'set -ex' >> steps_helm.sh
-          for i in {3..10}; do
+          for i in {4..10}; do
             echo "./step${i}.sh" >> steps_helm.sh
           done
           chmod +x steps_helm.sh
