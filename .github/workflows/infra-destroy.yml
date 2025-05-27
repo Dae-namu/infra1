@@ -41,7 +41,7 @@ jobs:
         run: |
           echo '#!/bin/bash' > stepxs.sh
           echo 'set -e' >> stepxs.sh
-          for i in {1..10}; do
+          for i in 10 7 6 9 5 4 3 2 1; do
             echo "./step${i}x.sh" >> stepxs.sh
           done
           chmod +x stepxs.sh
