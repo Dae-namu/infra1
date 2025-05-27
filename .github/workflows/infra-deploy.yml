@@ -101,6 +101,12 @@ jobs:
       - name: Run Helm/K8s steps
         run: ./steps_helm.sh
 
+      - name: Update Kubeconfig for EKS
+        run: |
+          aws eks update-kubeconfig \
+            --name ${{ env.CLUSTER_NAME }} \
+            --region ${{ env.AWS_REGION }}
+
       # - name: Install Helm
       #   run: |
       #     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
