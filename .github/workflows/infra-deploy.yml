@@ -38,11 +38,6 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      # 복원 후 Helm, Kubernetes 리소스 문제 없이 처리
-      - name: Restore kube_providers.tf
-        run: |
-          mv skipped/kube_providers.tf . || true
-
       - name: Import IAM resources
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -67,6 +62,12 @@ jobs:
           terraform import aws_iam_role.alb_sa_role AmazonEKSLoadBalancerControllerRole || true
           terraform import aws_iam_policy.alb_policy arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy || true
           terraform import aws_iam_role_policy_attachment.alb_policy_attach arn:aws:iam::${AWS_ACCOUNT_ID}:role/AmazonEKSLoadBalancerControllerRole/arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy || true
+
+      # 복원 후 Helm, Kubernetes 리소스 문제 없이 처리
+      - name: Restore kube_providers.tf
+        run: |
+          mv skipped/kube_providers.tf . || true
+
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
