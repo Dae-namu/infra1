@@ -38,45 +38,24 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Import IAM resources
+      - name: Import IAM resources (safe minimal version)
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: |
-          # EKS 클러스터용 IAM 역할
           terraform import aws_iam_role.cluster daenamu-test-eks-cluster-role || true
-          terraform import aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy arn:aws:iam::${AWS_ACCOUNT_ID}:role/daenamu-test-eks-cluster-role/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy || true
-          terraform import aws_iam_role_policy_attachment.cluster_AmazonEKSVPCResourceController arn:aws:iam::${AWS_ACCOUNT_ID}:role/daenamu-test-eks-cluster-role/arn:aws:iam::aws:policy/AmazonEKSVPCResourceController || true
-
-          # Fargate Pod Execution Role
-          terraform import aws_iam_role.pod_execution daenamu-test-eks-pod-execution-role || true
-          terraform import aws_iam_role_policy_attachment.pod_execution_AmazonEKSFargatePodExecutionRolePolicy arn:aws:iam::${AWS_ACCOUNT_ID}:role/daenamu-test-eks-pod-execution-role/arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy || true
-
-          # EC2 Node Group Role
           terraform import aws_iam_role.node_group daenamu-test-node-group-role || true
           terraform import aws_iam_instance_profile.node_group daenamu-test-node-group-instance-profile || true
-          terraform import aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy arn:aws:iam::${AWS_ACCOUNT_ID}:role/daenamu-test-node-group-role/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy || true
-          terraform import aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy arn:aws:iam::${AWS_ACCOUNT_ID}:role/daenamu-test-node-group-role/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy || true
-          terraform import aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly arn:aws:iam::${AWS_ACCOUNT_ID}:role/daenamu-test-node-group-role/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly || true
-
-          # ALB Controller
           terraform import aws_iam_role.alb_sa_role AmazonEKSLoadBalancerControllerRole || true
           terraform import aws_iam_policy.alb_policy arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy || true
-          terraform import aws_iam_role_policy_attachment.alb_policy_attach arn:aws:iam::${AWS_ACCOUNT_ID}:role/AmazonEKSLoadBalancerControllerRole/arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy || true
-
-      # 복원 후 Helm, Kubernetes 리소스 문제 없이 처리
-      - name: Restore kube_providers.tf
-        run: |
-          mv skipped/kube_providers.tf . || true
-
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      - name: Create steps.sh dynamically with loop
+      - name: Create steps.sh dynamically with loop (EKS)
         run: |
           echo '#!/bin/bash' > steps.sh
           echo 'set -e' >> steps.sh
-          for i in {1..10}; do
+          for i in 1 2 3 4 5 9; do
             echo "./step${i}.sh" >> steps.sh
           done
           chmod +x steps.sh
@@ -89,6 +68,26 @@ jobs:
           aws eks update-kubeconfig \
             --name ${{ env.CLUSTER_NAME }} \
             --region ${{ env.AWS_REGION }}
+
+      # 복원 후 Helm, Kubernetes 리소스 문제 없이 처리
+      - name: Restore kube_providers.tf
+        run: |
+          mv skipped/kube_providers.tf . || true
+
+      - name: Terraform Plan (with K8s/Helm)
+        run: terraform plan -out=tfplan-k8s
+
+      - name: Create steps_helm.sh dynamically with loop (Helm)
+        run: |
+          echo '#!/bin/bash' > steps_helm.sh
+          echo 'set -e' >> steps_helm.sh
+          for i in 6 7 10; do
+            echo "./step${i}.sh" >> steps_helm.sh
+          done
+          chmod +x steps_helm.sh
+
+      - name: Run Helm/K8s steps
+        run: ./steps_helm.sh
 
       # - name: Install Helm
       #   run: |
