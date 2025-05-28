@@ -5,5 +5,6 @@ terraform apply --auto-approve \
   -target=kubernetes_namespace.istio_system \
   -target=helm_release.istio_base \
   -target=helm_release.istiod \
-  -target=helm_release.istio_ingress 
+  -target=helm_release.istio_ingress \
+  -target=helm_release.metrics_server
   
