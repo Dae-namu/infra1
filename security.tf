@@ -40,3 +40,12 @@ resource "aws_security_group_rule" "allow_http_https" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.eks_nodes.id
 }
+
+resource "aws_security_group_rule" "allow_backend_8001" {
+  type              = "ingress"
+  from_port         = 8001
+  to_port           = 8001
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.eks_nodes.id
+}
