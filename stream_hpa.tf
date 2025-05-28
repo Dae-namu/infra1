@@ -26,7 +26,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "stream_hpa" {
     }
   }
 
-  depends_on = [
-    kubernetes_manifest.stream  # YAML을 manifest로 썼을 경우
-  ]
+  # depends_on = [
+  #   kubernetes_manifest.stream  # YAML을 manifest로 썼을 경우
+  # ]
 }
