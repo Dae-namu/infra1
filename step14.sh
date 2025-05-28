@@ -1,0 +1,1 @@
+terraform apply --auto-approve -target=kubernetes_manifest.drama_gateway
