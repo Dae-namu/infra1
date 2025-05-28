@@ -105,7 +105,7 @@ jobs:
         run: |
           echo '#!/bin/bash' > steps_helm.sh
           echo 'set -ex' >> steps_helm.sh
-          for i in {4..10}; do
+          for i in {4..16}; do
             echo "./step${i}.sh" >> steps_helm.sh
           done
           chmod +x steps_helm.sh
