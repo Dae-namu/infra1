@@ -48,7 +48,26 @@ resource "helm_release" "istiod" {
     name  = "values.global.proxy.autoInject"
     value = "enabled"
   }
+
+  set {
+  name  = "values.tracing.enabled"
+  value = "true"
 }
+ set {
+    name  = "collector.zipkin.hostPort"
+    value = "9411"
+  }
+
+set {
+  name  = "values.global.tracer.zipkin.address"
+  value = "jaeger-collector.istio-system.svc.cluster.local:9411"
+}
+
+
+  
+}
+
+
 
 # 3. Ingress Gateway 설치 (선택)
 resource "helm_release" "istio_ingress" {
