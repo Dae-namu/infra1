@@ -67,7 +67,7 @@ resource "kubernetes_ingress_v1" "daenamu_api_ingress" {
       "alb.ingress.kubernetes.io/scheme"                    = "internet-facing"
       "alb.ingress.kubernetes.io/target-type"               = "ip"
       "alb.ingress.kubernetes.io/listen-ports"              = "[{\"HTTP\":80}]"
-      "alb.ingress.kubernetes.io/healthcheck-path"          = "/actuator/health"
+      "alb.ingress.kubernetes.io/healthcheck-path"          = "/"
       "alb.ingress.kubernetes.io/success-codes"             = "200"
       "alb.ingress.kubernetes.io/backend-protocol"          = "HTTP"
     }
@@ -78,7 +78,7 @@ resource "kubernetes_ingress_v1" "daenamu_api_ingress" {
     rule {
       http {
         path {
-          path      = "/daenamu"
+          path      = "/"
           path_type = "Prefix"
           backend {
             service {
