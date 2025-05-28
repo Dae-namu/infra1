@@ -1,36 +1,33 @@
-# Nginx 애플리케이션 배포 (Pod 생성)
-# Nginx Deployment
-resource "kubernetes_deployment" "nginx" {
+# 백엔드 애플리케이션 Deployment
+resource "kubernetes_deployment" "daenamu_api" {
   metadata {
-    name = "nginx-deployment"
+    name = "daenamu-api-deployment"
     labels = {
-      app = "nginx"
+      app = "daenamu-api"
     }
   }
 
   spec {
     replicas = 1
-
     selector {
       match_labels = {
-        app = "nginx"
+        app = "daenamu-api"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "nginx"
+          app = "daenamu-api"
         }
       }
 
       spec {
         container {
-          name  = "nginx"
-          image = "nginx:latest"
-
+          name  = "daenamu-api"
+          image = "745173969277.dkr.ecr.ap-northeast-2.amazonaws.com/daenamu"
           port {
-            container_port = 80
+            container_port = 8001
           }
         }
       }
@@ -38,42 +35,42 @@ resource "kubernetes_deployment" "nginx" {
   }
 }
 
-# Nginx Service (NodePort 타입)
-resource "kubernetes_service" "nginx" {
+# 백엔드 Service
+resource "kubernetes_service" "daenamu_api" {
   metadata {
-    name = "nginx-service"
+    name = "daenamu-api-service"
     labels = {
-      app = "nginx"
+      app = "daenamu-api"
     }
   }
 
   spec {
     selector = {
-      app = "nginx"
+      app = "daenamu-api"
     }
 
     port {
       port        = 80
-      target_port = 80
+      target_port = 8001
     }
 
-    type = "NodePort"
+    type = "ClusterIP"
   }
 }
 
-# ALB controller를 통해 외부 요청을 Nginx로 라우팅 (ingress 리소스)
-resource "kubernetes_ingress_v1" "nginx_ingress" {
+# ALB Ingress 리소스
+resource "kubernetes_ingress_v1" "daenamu_api_ingress" {
   metadata {
-    name = "nginx-ingress"
+    name = "daenamu-api-ingress"
     annotations = {
       "kubernetes.io/ingress.class"                         = "alb"
       "alb.ingress.kubernetes.io/scheme"                    = "internet-facing"
       "alb.ingress.kubernetes.io/target-type"               = "ip"
       "alb.ingress.kubernetes.io/listen-ports"              = "[{\"HTTP\":80}]"
-      "alb.ingress.kubernetes.io/healthcheck-path"          = "/"
+      "alb.ingress.kubernetes.io/healthcheck-path"          = "/actuator/health"
       "alb.ingress.kubernetes.io/success-codes"             = "200"
       "alb.ingress.kubernetes.io/backend-protocol"          = "HTTP"
-  }
+    }
   }
 
   spec {
@@ -81,11 +78,11 @@ resource "kubernetes_ingress_v1" "nginx_ingress" {
     rule {
       http {
         path {
-          path      = "/"
+          path      = "/daenamu"
           path_type = "Prefix"
           backend {
             service {
-              name = kubernetes_service.nginx.metadata[0].name
+              name = kubernetes_service.daenamu_api.metadata[0].name
               port {
                 number = 80
               }
@@ -97,6 +94,6 @@ resource "kubernetes_ingress_v1" "nginx_ingress" {
   }
 
   depends_on = [
-    kubernetes_service.nginx
+    kubernetes_service.daenamu_api
   ]
 }
