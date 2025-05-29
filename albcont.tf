@@ -90,7 +90,7 @@ resource "kubernetes_ingress_v1" "istio_gateway_ingress" {
 spec {
     ingress_class_name = "alb"
     rule {
-      host = "jaeger.changal1234.com"  # 예: jaeger.aws9.pri
+      host = "jaeger.graderevive.net"  # 예: jaeger.aws9.pri
       http {
         path {
           path      = "/"
@@ -130,7 +130,7 @@ resource "kubernetes_manifest" "istio_ingress_gateway" {
       name     = "http"
       protocol = "HTTP"
     }
-    hosts = ["jaeger.changal1234.com"]
+    hosts = ["jaeger.graderevive.net"]
   },
   {
     port = {
@@ -142,7 +142,7 @@ resource "kubernetes_manifest" "istio_ingress_gateway" {
       mode           = "SIMPLE"
       credentialName = "jaeger-cert"
     }
-    hosts = ["jaeger.changal1234.com"]
+    hosts = ["jaeger.graderevive.net"]
   }
 ]
 

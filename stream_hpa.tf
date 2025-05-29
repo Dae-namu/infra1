@@ -12,7 +12,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "stream_hpa" {
     }
 
     min_replicas = 1
-    max_replicas = 5
+    max_replicas = 3
 
     metric {
       type = "Resource"

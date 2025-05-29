@@ -33,13 +33,17 @@ resource "aws_eks_node_group" "this" {
   subnet_ids      = aws_subnet.private[*].id
 
   scaling_config {
-    desired_size = 2
-    min_size     = 1
-    max_size     = 3
+    desired_size = 3
+    min_size     = 2
+    max_size     = 4
   }
 
   instance_types = ["t3.medium"]
   ami_type       = "AL2_x86_64"
+
+remote_access {
+    ec2_ssh_key = "testkey4"
+  }
 
   depends_on = [
     aws_eks_cluster.this,
