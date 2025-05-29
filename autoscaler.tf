@@ -11,6 +11,11 @@ resource "helm_release" "cluster_autoscaler" {
   }
 
   set {
+    name  = "autoDiscovery.enabled"
+    value = "true"
+  }
+
+  set {
     name  = "awsRegion"
     value = "ap-northeast-2"
   }
@@ -38,5 +43,15 @@ resource "helm_release" "cluster_autoscaler" {
   set {
     name  = "extraArgs.expander"
     value = "least-waste"
+  }
+
+  set {
+    name  = "serviceAccount.create"
+    value = "false"
+  }
+
+  set {
+    name  = "serviceAccount.name"
+    value = "cluster-autoscaler-sa"
   }
 }

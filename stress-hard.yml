@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stress-ng
+  namespace: default
+spec:
+  replicas: 15
+  selector:
+    matchLabels:
+      app: stress-ng
+  template:
+    metadata:
+      labels:
+        app: stress-ng
+    spec:
+      containers:
+      - name: stress-ng
+        image: polinux/stress
+        args: ["--cpu", "2"]
+        resources:
+          requests:
+            cpu: "1500m"
+            memory: "256Mi"
