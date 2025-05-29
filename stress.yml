@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpu-stress
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cpu-stress
+  template:
+    metadata:
+      labels:
+        app: cpu-stress
+    spec:
+      containers:
+      - name: cpu-stress
+        image: public.ecr.aws/amazonlinux/amazonlinux:2
+        command:
+        - /bin/bash
+        - -c
+        - |
+          amazon-linux-extras install epel -y
+          yum install -y stress-ng
+          while true; do
+            echo "Running CPU stress test..."
+            stress-ng --cpu 0 --cpu-method all --timeout 60s
+            sleep 5
+          done
+
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "256Mi"
+          limits:
+            cpu: "1"
+            memory: "512Mi"

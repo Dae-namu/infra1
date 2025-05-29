@@ -19,7 +19,7 @@ resource "helm_release" "kube_prometheus_stack" {
           alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
           alb.ingress.kubernetes.io/backend-protocol: HTTP
         hosts:
-          - "grafana.changal1234.com"
+          - "prom.graderevive.net"
         path: /
         pathType: Prefix
 
@@ -33,7 +33,7 @@ resource "helm_release" "kube_prometheus_stack" {
           alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
           alb.ingress.kubernetes.io/backend-protocol: HTTP
         hosts:
-          - "prom.changal1234.com"
+          - "prom.graderevive.net"
         path: /
         pathType: Prefix
     EOT

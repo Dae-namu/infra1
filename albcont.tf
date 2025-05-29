@@ -142,7 +142,7 @@ resource "kubernetes_manifest" "istio_ingress_gateway" {
       mode           = "SIMPLE"
       credentialName = "jaeger-cert"
     }
-    hosts = ["jaeger.graderevive.net"]
+    hosts = ["jaeger.graderevive.net","graderevive.net"]
   }
 ]
 

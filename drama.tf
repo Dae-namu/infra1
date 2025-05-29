@@ -93,7 +93,7 @@ resource "kubernetes_manifest" "drama_gateway" {
           name     = "http"
           protocol = "HTTP"
         }
-        hosts = ["changal1234.com"]
+        hosts = ["graderevive.net"]
       }]
     }
   }
@@ -115,7 +115,7 @@ resource "kubernetes_ingress_v1" "drama_ingress" {
   spec {
     ingress_class_name = "alb"
     rule {
-      host = "changal1234.com"
+      host = "graderevive.net"
       http {
         path {
           path      = "/dramas"
@@ -143,7 +143,7 @@ resource "kubernetes_manifest" "drama_virtualservice" {
       namespace = "default"
     }
     spec = {
-      hosts    = ["changal1234.com"]
+      hosts    = ["graderevive.net"]
       gateways = ["istio-system/drama-gateway"]
       http = [{
         match = [{ uri = { prefix = "/dramas" } }]
