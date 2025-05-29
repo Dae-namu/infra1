@@ -130,7 +130,7 @@ resource "kubernetes_manifest" "istio_ingress_gateway" {
       name     = "http"
       protocol = "HTTP"
     }
-    hosts = ["jaeger.graderevive.net"]
+    hosts = ["jaeger.graderevive.net","graderevive.net"]
   },
   {
     port = {
