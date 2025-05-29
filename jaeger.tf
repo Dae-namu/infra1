@@ -56,7 +56,7 @@ resource "kubernetes_manifest" "ingress_gateway_vs" {
       namespace = "istio-system"
     }
     spec = {
-      hosts    = ["jaeger.changal1234.com"]
+      hosts    = ["jaeger.graderevive.net"]
       gateways = ["istio-ingressgateway"]
       http = [
         {
